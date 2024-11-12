@@ -38,6 +38,8 @@ class ProjectController extends Controller
 
         $queryParams=request()->query();
         $projects=ProjectResource::collection($query->paginate(4)->appends($queryParams));
+        //query params can be [] when the page is loaded for the first time
+        $queryParams= (object) $queryParams;
         return Inertia::render('Project/Index',compact('projects','queryParams'));
     }
 

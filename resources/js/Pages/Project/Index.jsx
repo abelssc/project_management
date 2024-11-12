@@ -6,21 +6,16 @@ import { PROJECT_STATUS_CLASS_MAP, PROJECT_STATUS_TEXT_MAP } from '@/utils/const
 import { Head, Link, router } from '@inertiajs/react'
 import React from 'react'
 import { debounce } from 'lodash'
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid'
+import SortableColumn from '@/Components/SortableColumn'
+import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/solid'
 
-const Index = ({projects,queryParams}) => {
+const Index = ({projects,queryParams={}}) => {
 
     const handleChange=debounce((name,value)=>{
         queryParams[name] = value;
         if(value==='') delete queryParams[name];
         router.get(route('project.index'),queryParams,{preserveState:true});
     },300);
-
-    const sortColumn=(sort_column,sort_direction='asc')=>{
-        queryParams.sort_column = sort_column;
-        queryParams.sort_direction = sort_direction;
-        router.get(route('project.index'),queryParams,{preserveState:true});
-    };
 
   return (
     <AuthenticatedLayout
@@ -72,51 +67,20 @@ const Index = ({projects,queryParams}) => {
                             <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b-2 border-gray-500'>
                                 <tr className='text-nowrap'>
                                     <th className='px-3 py-4'>
-                                        <div className='flex gap-1 cursor-pointer'>
-                                            ID {
-                                                queryParams.sort_column==='id' && queryParams.sort_direction==='desc'
-                                                ?<ChevronUpIcon width={14} onClick={()=>sortColumn('id','asc')}/>
-                                                :<ChevronDownIcon width={14} onClick={()=>sortColumn('id','desc')}/>
-                                            }
-                                        </div>
+                                        <SortableColumn label="ID" column='id' queryParams={queryParams} url="project.index"/>
                                     </th>
                                     <th className='px-3 py-4'>IMAGE</th>
                                     <th className='px-3 py-4'>
-                                        <div className='flex gap-1 cursor-pointer'>
-                                            NAME {
-                                                queryParams.sort_column==='name' && queryParams.sort_direction==='desc'
-                                                ?<ChevronUpIcon width={14} onClick={()=>sortColumn('name','asc')}/>
-                                                :<ChevronDownIcon width={14} onClick={()=>sortColumn('name','desc')}/>
-                                            }
-                                        </div>
+                                        <SortableColumn label="NAME" column='name' queryParams={queryParams} url="project.index"/>
                                     </th>
                                     <th className='px-3 py-4'>
-                                       <div className='flex gap-1 cursor-pointer'>
-                                        STATUS {
-                                                queryParams.sort_column==='status' && queryParams.sort_direction==='desc'
-                                                ?<ChevronUpIcon width={14} onClick={()=>sortColumn('status','asc')}/>
-                                                :<ChevronDownIcon width={14} onClick={()=>sortColumn('status','desc')}/>
-                                            }
-                                       </div>
-                                            
+                                        <SortableColumn label="STATUS" column='status' queryParams={queryParams} url="project.index"/>
                                     </th>
                                     <th className='px-3 py-4'>
-                                       <div className='flex gap-1 cursor-pointer'>
-                                        CREATE DATE {
-                                                queryParams.sort_column==='created_at' && queryParams.sort_direction==='desc'
-                                                ?<ChevronUpIcon width={14} onClick={()=>sortColumn('created_at','asc')}/>
-                                                :<ChevronDownIcon width={14} onClick={()=>sortColumn('created_at','desc')}/>
-                                            }
-                                       </div>
+                                       <SortableColumn label="CREATE DATE" column='created_at' queryParams={queryParams} url="project.index"/>
                                     </th>
                                     <th className='px-3 py-4'>
-                                        <div className='flex gap-1 cursor-pointer'>
-                                            DUE DATE {
-                                                queryParams.sort_column==='due_date' && queryParams.sort_direction==='desc'
-                                                ?<ChevronUpIcon width={14} onClick={()=>sortColumn('due_date','asc')}/>
-                                                :<ChevronDownIcon width={14} onClick={()=>sortColumn('due_date','desc')}/>
-                                            }
-                                        </div>
+                                        <SortableColumn label="DUE DATE" column='due_date' queryParams={queryParams} url="project.index"/>
                                     </th>
                                     <th className='px-3 py-4'>CREATED BY</th>
                                     <th className='px-3 py-4 text-right'>Actions</th>
@@ -145,17 +109,20 @@ const Index = ({projects,queryParams}) => {
                                         </td>
                                         <td className='px-3 py-2 text-nowrap'>{project.due_date}</td>
                                         <td className='px-3 py-2'>{project.createdBy.name}</td>
-                                        <td>
-                                            <Link href={route('project.edit',project.id)}
-                                                className='font-medium text-blue-600 dark:text-blue-500 hover:underline mx-1'
-                                            >
-                                                Edit
-                                            </Link>
-                                            <Link href={route('project.destroy',project.id)}
-                                                className='font-medium text-red-600 dark:text-red-500 hover:underline mx-1'
-                                            >
-                                                Delete
-                                            </Link>
+                                        <td className='px-3 py-2'>
+                                            <div className='flex gap-1'>
+                                                <Link href={route('project.edit',project.id)}
+                                                    className='font-medium text-blue-600 dark:text-blue-500'
+                                                >
+                                                    <PencilSquareIcon width={20} className='hover:text-blue-800 dark:hover:text-blue-300' />
+                                                </Link>
+                                                <Link href={route('project.destroy',project.id)}
+                                                    className='font-medium text-red-600 dark:text-red-500'
+                                                >
+                                                    <TrashIcon width={20} className='hover:text-red-800 dark:hover:text-red-300' />
+                                                </Link>
+
+                                            </div>
                                         </td>
                                     </tr>
                                 )}
