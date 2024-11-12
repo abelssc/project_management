@@ -14,9 +14,31 @@ class ProjectController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        $projects=ProjectResource::collection(Project::paginate(4));
-        return Inertia::render('Project/Index',compact('projects'));
+    {   
+        $query=Project::query();
+        //1. conbinando if y request
+        // if(request('name')){
+        //     $query->where('name','like','%'.request('name').'%'); 
+        // }
+        // if(request('status')){
+        //     $query->where('status',request('status'));
+        // }
+        //2. Aplicando filtros condicionalmente con when
+        $query->when(request('name'), function ($q, $name) {
+            $q->where('name', 'like', '%' . $name . '%');
+        });
+    
+        $query->when(request('status'), function ($q, $status) {
+            $q->where('status', $status);
+        });
+
+        $query->when(request('sort_column'), function($q,$sort_column) {
+            $q->orderBy($sort_column,request('sort_direction','asc'));
+        });
+
+        $queryParams=request()->query();
+        $projects=ProjectResource::collection($query->paginate(4)->appends($queryParams));
+        return Inertia::render('Project/Index',compact('projects','queryParams'));
     }
 
     /**
