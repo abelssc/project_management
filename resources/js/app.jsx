@@ -4,6 +4,7 @@ import './bootstrap';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
+import { applyTheme, savedTheme } from './utils/darkmode';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -23,3 +24,4 @@ createInertiaApp({
         color: '#4B5563',
     },
 });
+applyTheme(savedTheme());
