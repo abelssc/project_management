@@ -32,6 +32,14 @@ class ProjectController extends Controller
             $q->where('status', $status);
         });
 
+        $query->when(request('created_from'), function($q,$created_from){
+            $q->where('created_at','>=',$created_from);
+        });
+
+        $query->when(request('created_until'), function($q,$created_until){
+            $q->where('created_at','<=',$created_until);
+        });
+
         $query->when(request('sort_column'), function($q,$sort_column) {
             $q->orderBy($sort_column,request('sort_direction','asc'));
         });
